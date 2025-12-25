@@ -35,12 +35,11 @@ function App() {
     setText(''); setAmount(''); fetchTransactions();
   };
 
-  // --- NEW: Clear All Data Function ---
   const clearData = async () => {
     if (window.confirm("Are you sure you want to delete ALL data? This cannot be undone.")) {
       try {
         await axios.delete('https://money-tracker-api-8jk8.onrender.com/transactions');
-        fetchTransactions(); // Refresh list to show empty
+        fetchTransactions(); 
         alert("All transactions deleted successfully!");
       } catch (error) {
         console.error("Error clearing data:", error);
@@ -100,33 +99,44 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Money Tracker 💸</h1>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Money Tracker 💸</h2>
       
+      {/* 1. Summary Cards */}
       <div className="summary-container">
-        <div className="card balance"><h3>Balance</h3><h1>₹{balance}</h1></div>
-        <div className="card income"><h3>Income</h3><h1 style={{color: 'green'}}>+₹{income}</h1></div>
-        <div className="card expense"><h3>Expense</h3><h1 style={{color: 'red'}}>-₹{expense}</h1></div>
+        <div className="card">
+          <h3>Balance</h3>
+          <h1>₹{balance}</h1>
+        </div>
+        <div className="card">
+          <h3>Income</h3>
+          <h1 style={{color: '#2ecc71'}}>+₹{income}</h1>
+        </div>
+        <div className="card">
+          <h3>Expense</h3>
+          <h1 style={{color: '#e74c3c'}}>-₹{expense}</h1>
+        </div>
       </div>
 
-      <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
+      {/* 2. Charts Section (Wrapped to stack on mobile) */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
         {chartData.length > 0 && (
-          <div className="chart-container" style={{flex: 1, minWidth: '300px'}}>
-              <h3>Category Split</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie data={chartData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value" label>
-                    {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip /><Legend />
-                </PieChart>
-              </ResponsiveContainer>
+          <div className="card" style={{ minHeight: '300px' }}>
+             <h3>Category Split</h3>
+             <ResponsiveContainer width="100%" height={250}>
+               <PieChart>
+                 <Pie data={chartData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value" label>
+                   {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                 </Pie>
+                 <Tooltip /><Legend />
+               </PieChart>
+             </ResponsiveContainer>
           </div>
         )}
 
         {dailyData.length > 0 && (
-           <div className="chart-container" style={{flex: 1, minWidth: '300px'}}>
+           <div className="card" style={{ minHeight: '300px' }}>
             <h3>Daily Expenses</h3>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={dailyData}>
                 <CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="date" /><YAxis /><Tooltip /><Bar dataKey="amount" fill="#82ca9d" />
               </BarChart>
@@ -135,62 +145,76 @@ function App() {
         )}
       </div>
 
-      <div className="upload-section" style={{background: '#fff', padding: '20px', marginTop: '20px', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)'}}>
-        <h3>📥 Import from CSV</h3>
-        <p>Upload a CSV file with columns: <b>Date, Description, Amount, Type, Category</b></p>
-        <input type="file" accept=".csv" onChange={handleFileUpload} />
-      </div>
-
+      {/* 3. Add Transaction Form */}
       <form onSubmit={addTransaction} className="transaction-form">
+        <h3 style={{margin: '0 0 10px 0'}}>Add New</h3>
         <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-        <input type="text" placeholder="Description" value={text} onChange={(e) => setText(e.target.value)} required />
-        <input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+        <input type="text" placeholder="Description (e.g. Salary)" value={text} onChange={(e) => setText(e.target.value)} required />
+        <input type="number" placeholder="Amount (₹)" value={amount} onChange={(e) => setAmount(e.target.value)} required />
         
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="Food">Food</option>
-          <option value="Travel">Travel</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Bills">Bills</option>
-          <option value="Salary">Salary/Income</option>
+          <option value="Food">Food 🍔</option>
+          <option value="Travel">Travel 🚕</option>
+          <option value="Shopping">Shopping 🛍️</option>
+          <option value="Bills">Bills 🧾</option>
+          <option value="Salary">Salary 💰</option>
         </select>
 
         <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="debit">Expense</option>
-          <option value="credit">Income</option>
+          <option value="debit">Expense (Money Out)</option>
+          <option value="credit">Income (Money In)</option>
         </select>
+        
         <button type="submit">Add Transaction</button>
       </form>
 
-      {/* LIST HEADER WITH CLEAR BUTTON */}
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '30px'}}>
+      {/* 4. Import / CSV Section */}
+      <div className="card" style={{ marginBottom: '30px', textAlign: 'left' }}>
+        <h3>📥 Import CSV</h3>
+        <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '10px' }}>
+          Upload a CSV with columns: <b>Date, Description, Amount, Type, Category</b>
+        </p>
+        <input type="file" accept=".csv" onChange={handleFileUpload} style={{ padding: '10px', background: '#f9f9f9', width: '100%' }} />
+      </div>
+
+      {/* 5. Transaction History List */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
         <h3>History</h3>
         <button 
           onClick={clearData} 
           style={{
-            backgroundColor: '#ff4d4d', 
-            color: 'white', 
-            padding: '8px 12px', 
-            border: 'none', 
-            borderRadius: '5px', 
-            cursor: 'pointer',
-            fontWeight: 'bold'
+            backgroundColor: 'transparent', 
+            color: '#ff4d4d', 
+            border: '1px solid #ff4d4d',
+            padding: '5px 10px',
+            borderRadius: '5px',
+            width: 'auto',
+            fontSize: '0.8rem'
           }}
         >
-          🗑️ Clear All
+          Clear All
         </button>
       </div>
 
       <div className="transaction-list">
-        {transactions.map((t) => (
+        {transactions.slice().reverse().map((t) => ( // Reversed to show newest first
           <div key={t._id} className={`transaction-item ${t.type}`}>
-            <span className="category-tag">{t.category}</span>
-            <div style={{display:'flex', flexDirection:'column', alignItems:'flex-start'}}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span className="category-tag">{t.category}</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span>{t.text}</span>
-                <span style={{fontSize: '0.8rem', color: '#777'}}>{new Date(t.date).toLocaleDateString()}</span>
+                <span style={{ fontSize: '0.75rem', color: '#999' }}>{new Date(t.date).toLocaleDateString()}</span>
+              </div>
             </div>
-            <span>{t.type === 'credit' ? '+' : '-'} ₹{t.amount}</span>
+            <span style={{ fontWeight: 'bold', color: t.type === 'credit' ? '#2ecc71' : '#e74c3c' }}>
+              {t.type === 'credit' ? '+' : '-'} ₹{t.amount}
+            </span>
           </div>
         ))}
+        
+        {transactions.length === 0 && (
+          <p style={{ textAlign: 'center', color: '#888', marginTop: '20px' }}>No transactions yet. Add one above!</p>
+        )}
       </div>
     </div>
   );

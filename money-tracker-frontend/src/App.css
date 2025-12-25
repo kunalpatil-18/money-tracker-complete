@@ -1,74 +1,149 @@
+/* Universal Reset & Font */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #f0f2f5; /* Slightly darker background for contrast */
+}
+
 .App {
-  font-family: 'Segoe UI', sans-serif;
-  max-width: 600px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  max-width: 480px; /* Limits width to look like an app on computer */
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #f0f2f5;
   min-height: 100vh;
 }
 
-/* Summary Cards */
+/* --- Summary Cards (The Header) --- */
 .summary-container {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
 .card {
   background: white;
-  padding: 15px;
-  border-radius: 10px;
+  padding: 20px 15px;
+  border-radius: 16px; /* Rounder corners */
   flex: 1;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06); /* Softer, modern shadow */
+  transition: transform 0.2s;
 }
 
-.card h1 { margin: 5px 0 0; font-size: 1.5rem; }
-.card h3 { margin: 0; font-size: 0.9rem; color: #777; text-transform: uppercase; }
+/* Optional: Make the cards interactive */
+.card:active {
+  transform: scale(0.98);
+}
 
-/* Form */
+.card h3 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.card h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #333;
+}
+
+/* Highlight the Total Balance if you have a specific class for it, 
+   otherwise this style applies to all cards nicely. */
+
+
+/* --- Form (Input Area) --- */
 .transaction-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex; /* Changed from Grid to Flex for better mobile stacking */
+  flex-direction: column; /* Stack inputs vertically */
+  gap: 15px;
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  padding: 25px;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.transaction-form input, 
+.transaction-form select {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #eee;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  font-size: 16px; /* Prevents iPhone zooming */
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.transaction-form input:focus {
+  border-color: #667eea;
+  background-color: #fff;
 }
 
 .transaction-form button {
-  grid-column: span 2;
-  background-color: #333;
+  width: 100%;
+  background: linear-gradient(135deg, #333 0%, #000 100%); /* Premium black gradient */
   color: white;
-  padding: 10px;
+  padding: 18px;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
+  margin-top: 5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* List */
+.transaction-form button:active {
+  transform: scale(0.98);
+}
+
+
+/* --- List (Transactions) --- */
 .transaction-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: white;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 18px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  position: relative; /* For the colored bar */
+  overflow: hidden;
 }
 
-.transaction-item.credit { border-left: 5px solid #2ecc71; }
-.transaction-item.debit { border-left: 5px solid #e74c3c; }
+/* The colored bars are now thicker and cleaner */
+.transaction-item.credit { 
+  border-left: 6px solid #2ecc71; 
+}
+
+.transaction-item.debit { 
+  border-left: 6px solid #e74c3c; 
+}
+
+/* Make the text look sharper */
+.transaction-item span {
+  font-weight: 500;
+  color: #333;
+}
 
 .category-tag {
-  background: #eee;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  color: #555;
-  margin-right: 10px;
+  background: #f0f2f5;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  margin-right: 12px;
+  text-transform: capitalize;
 }
